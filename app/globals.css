@@ -3,7 +3,7 @@
 @import 'tailwindcss/utilities';
 
 .translator {
-  @apply flex flex-col gap-6 w-full min-h-screen p-8;
+  @apply flex flex-col gap-6 w-full min-h-screen p-4 sm:p-8;
 }
 
 .input-text,
@@ -20,7 +20,7 @@
 }
 
 .settings-button {
-  @apply flex items-center gap-2 py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg self-end mb-4 transition duration-300;
+  @apply flex items-center justify-center gap-2 py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg transition duration-300;
 }
 
 .settings-button:hover {
