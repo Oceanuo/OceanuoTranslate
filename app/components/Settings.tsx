@@ -10,6 +10,10 @@ import DropdownIcon from '../../public/dropdown.svg';
 import PenIcon from '../../public/pen.svg';
 import groqModels from '../../models/groq.json';
 import openaiModels from '../../models/openai.json';
+import { copyToClipboard } from '../utils/clipboard';
+import CopyIcon from '../../public/copy.svg';
+import CopiedIcon from '../../public/copied.svg';
+import ClearIcon from '../../public/clear.svg';
 
 const Settings = () => {
   const [inputText, setInputText] = useState('');
@@ -34,6 +38,8 @@ const Settings = () => {
   const [customLanguage, setCustomLanguage] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [inputCopied, setInputCopied] = useState(false);
+  const [outputCopied, setOutputCopied] = useState(false);
 
   const apiEndpoint = `${tempSettings.apiHost}/chat/completions`;
 
@@ -45,8 +51,6 @@ const Settings = () => {
     const savedSettings = loadFromLocalStorage('settings', settings);
     setSettings(savedSettings);
     setTempSettings(savedSettings);
-    setInputText(loadFromLocalStorage('inputText', ''));
-    setOutputText(loadFromLocalStorage('outputText', ''));
     setTargetLanguage(loadFromLocalStorage('targetLanguage', ''));
     setTheme(savedSettings.theme);
     setIsCustomLanguage(loadFromLocalStorage('isCustomLanguage', false));
@@ -89,7 +93,6 @@ const Settings = () => {
       const data = await response.json();
       const translatedText = data.choices[0].message.content.trim();
       setOutputText(translatedText);
-      saveToLocalStorage('outputText', translatedText);
     } catch (error) {
       console.error('Translation error:', error);
       setOutputText('An error occurred during translation. Please check your settings and try again.');
@@ -163,8 +166,24 @@ const Settings = () => {
     setShowApiKey(!showApiKey);
   };
 
+  const handleCopy = async (text: string, setCopied: (copied: boolean) => void) => {
+    const success = await copyToClipboard(text);
+    if (success) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const handleClearInput = () => {
+    setInputText('');
+  };
+
+  const handleClearOutput = () => {
+    setOutputText('');
+  };
+
   return (
-    <div className="translator">
+    <div className="translator flex flex-col h-screen">
       <div className="flex flex-col items-center mb-6 gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">FatherTranslator</h1>
         <button onClick={toggleSettings} className="settings-button w-full">
@@ -267,15 +286,42 @@ const Settings = () => {
         </div>
       ) : (
         <div className="flex flex-col flex-grow gap-6">
-          <textarea
-            value={inputText}
-            onChange={(e) => {
-              setInputText(e.target.value);
-              saveToLocalStorage('inputText', e.target.value);
-            }}
-            placeholder="Enter text to translate"
-            className="input-text"
-          />
+          <div className="relative flex-grow">
+            <textarea
+              value={inputText}
+              onChange={(e) => {
+                setInputText(e.target.value);
+              }}
+              placeholder="Enter text to translate"
+              className="input-text w-full h-full resize-none"
+            />
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button
+                onClick={handleClearInput}
+                className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                title="Clear input"
+              >
+                <Image
+                  src={ClearIcon}
+                  alt="Clear"
+                  width={20}
+                  height={20}
+                />
+              </button>
+              <button
+                onClick={() => handleCopy(inputText, setInputCopied)}
+                className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                title="Copy input"
+              >
+                <Image
+                  src={inputCopied ? CopiedIcon : CopyIcon}
+                  alt={inputCopied ? "Copied" : "Copy"}
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             {isCustomLanguage ? (
               <input
@@ -327,12 +373,40 @@ const Settings = () => {
           >
             {isTranslating ? 'Translating...' : 'Translate'}
           </button>
-          <textarea
-            value={outputText}
-            readOnly
-            placeholder="Translation will appear here"
-            className="output-text"
-          />
+          <div className="relative flex-grow">
+            <textarea
+              value={outputText}
+              readOnly
+              placeholder="Translation will appear here"
+              className="output-text w-full h-full resize-none"
+            />
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button
+                onClick={handleClearOutput}
+                className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                title="Clear output"
+              >
+                <Image
+                  src={ClearIcon}
+                  alt="Clear"
+                  width={20}
+                  height={20}
+                />
+              </button>
+              <button
+                onClick={() => handleCopy(outputText, setOutputCopied)}
+                className="p-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+                title="Copy output"
+              >
+                <Image
+                  src={outputCopied ? CopiedIcon : CopyIcon}
+                  alt={outputCopied ? "Copied" : "Copy"}
+                  width={20}
+                  height={20}
+                />
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
