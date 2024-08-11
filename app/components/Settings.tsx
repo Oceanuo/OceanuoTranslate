@@ -19,9 +19,9 @@ const Settings = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [settings, setSettings] = useState({
     modelProvider: 'openai',
+    model: 'gpt-4o-mini-2024-07-18',
     apiKey: '',
     apiHost: 'https://api.openai.com/v1',
-    model: '',
     temperature: 0.7,
     topP: 1,
     presencePenalty: 0,
@@ -146,9 +146,9 @@ const Settings = () => {
   const restoreDefaultSettings = () => {
     const defaultSettings = {
       modelProvider: 'openai',
+      model: 'gpt-4o-mini-2024-07-18',
       apiKey: '',
       apiHost: 'https://api.openai.com/v1',
-      model: '',
       temperature: 0.7,
       topP: 1,
       presencePenalty: 0,
