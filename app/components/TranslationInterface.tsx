@@ -33,6 +33,11 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
       return;
     }
 
+    if (!language) {
+      setOutputText('Please select a target language.');
+      return;
+    }
+
     setIsTranslating(true);
     setOutputText('Translating...');
 
@@ -47,7 +52,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
           model: settings.model,
           messages: [
             { role: "system", content: settings.systemPrompt },
-            { role: "user", content: `Translate the following source text to "${language}", Output translation directly without any additional text.\nSource Text: "${inputText}"\nTranslated Text:` }
+            { role: "user", content: `Translate the following source text to ${language}. Output translation directly without any additional text.\nSource Text: ${inputText}\n\nTranslated Text:` }
           ],
           temperature: parseFloat(settings.temperature.toString()),
           top_p: parseFloat(settings.topP.toString()),
