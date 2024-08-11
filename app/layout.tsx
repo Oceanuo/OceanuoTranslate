@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/fathertranslator.png" type="image/png" sizes="32x32" />
+        <link rel="icon" href="/fathertranslator.png" />
         <link rel="apple-touch-icon" href="/fathertranslator.png" />
       </head>
       <body className={`${inter.className} bg-white dark:bg-gray-900 text-black dark:text-white`}>{children}</body>
