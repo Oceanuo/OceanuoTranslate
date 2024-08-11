@@ -165,9 +165,9 @@ const Settings = () => {
 
   return (
     <div className="translator">
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+      <div className="flex flex-col items-center mb-6 gap-4">
         <h1 className="text-2xl sm:text-3xl font-bold">FatherTranslator</h1>
-        <button onClick={toggleSettings} className="settings-button w-full sm:w-auto">
+        <button onClick={toggleSettings} className="settings-button w-full">
           <FiSettings />
           <span>Settings</span>
         </button>
