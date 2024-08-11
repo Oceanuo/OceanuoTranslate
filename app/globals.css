@@ -1,33 +1,74 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.translator {
+  @apply flex flex-col gap-6 w-full min-h-screen p-8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.input-text,
+.output-text {
+  @apply w-full flex-grow p-4 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white;
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.language-select {
+  @apply w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.translate-button {
+  @apply py-3 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-300;
+}
+
+.settings-button {
+  @apply flex items-center gap-2 py-2 px-4 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg self-end mb-4 transition duration-300;
+}
+
+.settings-button:hover {
+  @apply bg-gray-300 dark:bg-gray-600;
+}
+
+.settings-page {
+  @apply fixed inset-0 bg-white dark:bg-gray-900 z-50 p-8 overflow-auto flex flex-col;
+}
+
+.settings-page h2 {
+  @apply text-2xl font-bold mb-6;
+}
+
+.settings-page form {
+  @apply flex flex-col gap-4 flex-grow;
+}
+
+.settings-page label {
+  @apply flex flex-col gap-2;
+}
+
+.settings-page input,
+.settings-page select,
+.settings-page textarea {
+  @apply w-full p-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-black dark:text-white;
+}
+
+.settings-page button {
+  @apply py-2 px-4 rounded-lg font-semibold transition duration-300;
+}
+
+.settings-buttons {
+  @apply flex flex-wrap justify-stretch gap-4 mt-auto pt-6 border-t border-gray-200 dark:border-gray-700;
+}
+
+.btn {
+  @apply py-3 px-4 rounded-lg font-semibold transition duration-300 text-sm flex-grow text-center;
+}
+
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-700 text-white;
+}
+
+.btn-tertiary {
+  @apply bg-red-600 hover:bg-red-700 text-white;
 }
