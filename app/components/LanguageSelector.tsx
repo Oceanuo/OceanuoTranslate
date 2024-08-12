@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import DropdownIcon from '../../public/dropdown.svg';
 import PenIcon from '../../public/pen.svg';
@@ -9,20 +9,26 @@ interface LanguageSelectorProps {
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
-  const [targetLanguage, setTargetLanguage] = useState(loadFromLocalStorage('targetLanguage', ''));
+  const [targetLanguage, setTargetLanguage] = useState(loadFromLocalStorage('targetLanguage', 'en'));
   const [isCustomLanguage, setIsCustomLanguage] = useState(loadFromLocalStorage('isCustomLanguage', false));
   const [customLanguage, setCustomLanguage] = useState(loadFromLocalStorage('customLanguage', ''));
 
+  useEffect(() => {
+    onLanguageChange(targetLanguage);
+  }, []);
+
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTargetLanguage(e.target.value);
-    saveToLocalStorage('targetLanguage', e.target.value);
-    onLanguageChange(e.target.value);
+    const newLanguage = e.target.value;
+    setTargetLanguage(newLanguage);
+    saveToLocalStorage('targetLanguage', newLanguage);
+    onLanguageChange(newLanguage);
   };
 
   const handleCustomLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomLanguage(e.target.value);
-    saveToLocalStorage('customLanguage', e.target.value);
-    onLanguageChange(e.target.value);
+    const newLanguage = e.target.value;
+    setCustomLanguage(newLanguage);
+    saveToLocalStorage('customLanguage', newLanguage);
+    onLanguageChange(newLanguage);
   };
 
   const toggleCustomLanguage = () => {

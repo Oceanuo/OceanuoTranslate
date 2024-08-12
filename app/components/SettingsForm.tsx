@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import VisibilityIcon from '../../public/Visibility.svg';
 import VisibilityOffIcon from '../../public/VisibilityOff.svg';
 import groqModels from '../../models/groq.json';
 import openaiModels from '../../models/openai.json';
-import { saveToLocalStorage } from '../utils/localStorage'; 
+import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage'; 
+import PenIcon from '../../public/pen.svg';
+import DropdownIcon from '../../public/dropdown.svg';
 
 interface SettingsFormProps {
   settings: any;
@@ -14,8 +16,18 @@ interface SettingsFormProps {
 }
 
 const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, applyTheme, closeSettings }) => {
-  const [tempSettings, setTempSettings] = useState({...settings});
+  const [tempSettings, setTempSettings] = useState(() => {
+    const savedSettings = loadFromLocalStorage('settings', settings);
+    return {
+      ...savedSettings,
+      modelProvider: savedSettings.modelProvider || 'openai',
+      model: savedSettings.model || 'gpt-4o-mini-2024-07-18',
+    };
+  });
   const [showApiKey, setShowApiKey] = useState(false);
+  const [isModelEditable, setIsModelEditable] = useState(() => {
+    return loadFromLocalStorage('isModelEditable', false);
+  });
 
   const apiEndpoint = `${tempSettings.apiHost}/chat/completions`;
 
@@ -23,14 +35,40 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, appl
     return tempSettings.modelProvider === 'openai' ? openaiModels : groqModels;
   };
 
+  useEffect(() => {
+    // Apply the loaded settings
+    setSettings(tempSettings);
+    applyTheme(tempSettings.theme);
+  }, []);
+
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setTempSettings((prev: typeof tempSettings) => {
       const newSettings = { ...prev, [name]: value };
       if (name === 'modelProvider') {
         newSettings.apiHost = value === 'openai' ? 'https://api.openai.com/v1' : 'https://api.groq.com/openai/v1';
+        newSettings.model = value === 'openai' ? openaiModels[0] : groqModels[0];
+        setIsModelEditable(false);
+      }
+      if (name === 'model' && !getModelOptions().includes(value)) {
+        setIsModelEditable(true);
       }
       return newSettings;
+    });
+  };
+
+  const toggleModelInput = () => {
+    setIsModelEditable((prev: boolean) => {
+      if (prev) {
+        const currentOptions = getModelOptions();
+        if (!currentOptions.includes(tempSettings.model)) {
+          setTempSettings((prev: typeof tempSettings) => ({
+            ...prev,
+            model: currentOptions[0],
+          }));
+        }
+      }
+      return !prev;
     });
   };
 
@@ -38,6 +76,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, appl
     setSettings(tempSettings);
     applyTheme(tempSettings.theme);
     saveToLocalStorage('settings', tempSettings);
+    saveToLocalStorage('isModelEditable', isModelEditable);
     closeSettings();
   };
 
@@ -81,7 +120,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, appl
           Model Provider:
           <select name="modelProvider" value={tempSettings.modelProvider} onChange={handleSettingsChange}>
             <option value="openai">OpenAI</option>
-            <option value="groq">Groq</option>
+            <option value="groq">GROQ</option>
           </select>
         </label>
         <label>
@@ -123,13 +162,42 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, appl
         </p>
         <label>
           Model:
-          <select name="model" value={tempSettings.model} onChange={handleSettingsChange}>
-            {getModelOptions().map((model) => (
-              <option key={model} value={model}>
-                {model}
-              </option>
-            ))}
-          </select>
+          <div className="flex items-center">
+            {isModelEditable ? (
+              <input
+                type="text"
+                name="model"
+                value={tempSettings.model}
+                onChange={handleSettingsChange}
+                className="flex-grow"
+              />
+            ) : (
+              <select
+                name="model"
+                value={tempSettings.model}
+                onChange={handleSettingsChange}
+                className="flex-grow"
+              >
+                {getModelOptions().map((model) => (
+                  <option key={model} value={model}>
+                    {model}
+                  </option>
+                ))}
+              </select>
+            )}
+            <button
+              type="button"
+              onClick={toggleModelInput}
+              className="ml-2 p-2 bg-gray-200 dark:bg-gray-700 rounded-full"
+            >
+              <Image
+                src={isModelEditable ? DropdownIcon : PenIcon}
+                alt={isModelEditable ? "Show Dropdown" : "Edit Model"}
+                width={20}
+                height={20}
+              />
+            </button>
+          </div>
         </label>
         <label>
           Temperature:
