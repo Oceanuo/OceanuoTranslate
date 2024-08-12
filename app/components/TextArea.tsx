@@ -46,15 +46,15 @@ const TextArea: React.FC<TextAreaProps> = ({
   };
 
   return (
-    <div className="relative flex flex-row h-full rounded-lg overflow-hidden bg-gray-800">
-        <textarea
-          ref={textAreaRef}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder}
-          className="input-text w-full h-full resize-none bg-transparent border-none focus:outline-none focus:ring-0 pr-12"
-          readOnly={readOnly}
-        />
+    <div className="relative flex flex-col h-full rounded-lg overflow-hidden bg-gray-800">
+      <textarea
+        ref={textAreaRef}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="flex-grow w-full resize-none bg-transparent border-none focus:outline-none focus:ring-0 pr-12 p-4"
+        readOnly={readOnly}
+      />
       <div className="absolute top-0 right-0 bottom-0 bg-gray-700 p-2 flex flex-col justify-start gap-2">
         <button
           onClick={onCopy}
