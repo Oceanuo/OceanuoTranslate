@@ -46,29 +46,16 @@ const TextArea: React.FC<TextAreaProps> = ({
   };
 
   return (
-    <div className="relative flex flex-col h-full rounded-lg overflow-hidden bg-gray-800">
+    <div className="relative flex flex-row h-full rounded-lg overflow-hidden bg-gray-800">
         <textarea
           ref={textAreaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="input-text w-full h-full resize-none bg-transparent border-none focus:outline-none focus:ring-0"
+          className="input-text w-full h-full resize-none bg-transparent border-none focus:outline-none focus:ring-0 pr-12"
           readOnly={readOnly}
         />
-      <div className="bg-gradient-to-t from-gray-700 to-transparent h-8 pointer-events-none"></div>
-      <div className="absolute bottom-0 left-0 right-0 bg-gray-700 p-2 flex justify-end gap-2">
-        <button
-          onClick={handleClear}
-          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-full transition-colors duration-200"
-          title="Clear text"
-        >
-          <Image
-            src={cleared ? CleariedIcon : ClearIcon}
-            alt={cleared ? "Cleared" : "Clear"}
-            width={20}
-            height={20}
-          />
-        </button>
+      <div className="absolute top-0 right-0 bottom-0 bg-gray-700 p-2 flex flex-col justify-start gap-2">
         <button
           onClick={onCopy}
           className="p-2 bg-gray-600 hover:bg-gray-500 rounded-full transition-colors duration-200"
@@ -77,6 +64,18 @@ const TextArea: React.FC<TextAreaProps> = ({
           <Image
             src={copied ? CopiedIcon : CopyIcon}
             alt={copied ? "Copied" : "Copy"}
+            width={20}
+            height={20}
+          />
+        </button>
+        <button
+          onClick={handleClear}
+          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-full transition-colors duration-200"
+          title="Clear text"
+        >
+          <Image
+            src={cleared ? CleariedIcon : ClearIcon}
+            alt={cleared ? "Cleared" : "Clear"}
             width={20}
             height={20}
           />
