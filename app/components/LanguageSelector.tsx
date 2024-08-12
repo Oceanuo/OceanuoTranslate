@@ -9,12 +9,26 @@ interface LanguageSelectorProps {
 }
 
 const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
-  const [targetLanguage, setTargetLanguage] = useState(loadFromLocalStorage('targetLanguage', 'en'));
-  const [isCustomLanguage, setIsCustomLanguage] = useState(loadFromLocalStorage('isCustomLanguage', false));
-  const [customLanguage, setCustomLanguage] = useState(loadFromLocalStorage('customLanguage', ''));
+  const [targetLanguage, setTargetLanguage] = useState('en');
+  const [isCustomLanguage, setIsCustomLanguage] = useState(false);
+  const [customLanguage, setCustomLanguage] = useState('');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    onLanguageChange(targetLanguage);
+    setIsClient(true);
+    const storedTargetLanguage = loadFromLocalStorage('targetLanguage', 'en');
+    const storedIsCustomLanguage = loadFromLocalStorage('isCustomLanguage', false);
+    const storedCustomLanguage = loadFromLocalStorage('customLanguage', '');
+
+    setTargetLanguage(storedTargetLanguage);
+    setIsCustomLanguage(storedIsCustomLanguage);
+    setCustomLanguage(storedCustomLanguage);
+
+    if (storedIsCustomLanguage) {
+      onLanguageChange(storedCustomLanguage);
+    } else {
+      onLanguageChange(storedTargetLanguage);
+    }
   }, []);
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -32,9 +46,20 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
   };
 
   const toggleCustomLanguage = () => {
-    setIsCustomLanguage(!isCustomLanguage);
-    saveToLocalStorage('isCustomLanguage', !isCustomLanguage);
+    const newIsCustomLanguage = !isCustomLanguage;
+    setIsCustomLanguage(newIsCustomLanguage);
+    saveToLocalStorage('isCustomLanguage', newIsCustomLanguage);
+    
+    if (newIsCustomLanguage) {
+      onLanguageChange(customLanguage);
+    } else {
+      onLanguageChange(targetLanguage);
+    }
   };
+
+  if (!isClient) {
+    return null; 
+  }
 
   return (
     <div className="flex items-center gap-2">
