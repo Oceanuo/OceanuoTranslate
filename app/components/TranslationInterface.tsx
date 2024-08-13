@@ -39,7 +39,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
     }
 
     setIsTranslating(true);
-    setOutputText('Translating...');
+    setOutputText('...');
 
     try {
       const response = await fetch(settings.apiHost + '/chat/completions', {
@@ -57,7 +57,8 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
           temperature: parseFloat(settings.temperature.toString()),
           top_p: parseFloat(settings.topP.toString()),
           presence_penalty: parseFloat(settings.presencePenalty.toString()),
-          frequency_penalty: parseFloat(settings.frequencyPenalty.toString())
+          frequency_penalty: parseFloat(settings.frequencyPenalty.toString()),
+          stream: true
         })
       });
 
@@ -65,9 +66,31 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
-      const translatedText = data.choices[0].message.content.trim();
-      setOutputText(translatedText);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader!.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value);
+        const lines = chunk.split('\n');
+        const parsedLines = lines
+          .map((line) => line.replace(/^data: /, '').trim())
+          .filter((line) => line !== '' && line !== '[DONE]')
+          .map((line) => JSON.parse(line));
+
+        for (const parsedLine of parsedLines) {
+          const { choices } = parsedLine;
+          const { delta } = choices[0];
+          const { content } = delta;
+          if (content) {
+            setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content + '...' : prev + content + '...');
+          }
+        }
+      }
+
+      setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) : prev);
     } catch (error) {
       console.error('Translation error:', error);
       setOutputText('An error occurred during translation. Please check your settings and try again.');
@@ -98,6 +121,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
       <button 
         onClick={handleTranslate} 
         className="translate-button" 
+        disabled={isTranslating}
       >
         {isTranslating ? 'Translating...' : 'Translate'}
       </button>
