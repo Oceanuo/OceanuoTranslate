@@ -46,19 +46,19 @@ const TextArea: React.FC<TextAreaProps> = ({
   };
 
   return (
-    <div className="relative flex flex-col h-full rounded-lg overflow-hidden bg-gray-800">
+    <div className="relative flex flex-col h-full rounded-lg overflow-hidden bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
       <textarea
         ref={textAreaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="flex-grow w-full resize-none bg-transparent border-none focus:outline-none focus:ring-0 pr-12 p-4"
+        className="flex-grow w-full resize-none bg-white dark:bg-gray-800 border-none focus:outline-none focus:ring-0 pr-12 p-4 text-black dark:text-white"
         readOnly={readOnly}
       />
-      <div className="absolute top-0 right-0 bottom-0 bg-gray-700 p-2 flex flex-col justify-start gap-2">
+      <div className="absolute top-0 right-0 bottom-0 bg-gray-100 dark:bg-gray-700 p-2 flex flex-col justify-start gap-2">
         <button
           onClick={onCopy}
-          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-full transition-colors duration-200"
+          className="p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full transition-colors duration-200"
           title="Copy text"
         >
           <Image
@@ -70,7 +70,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         </button>
         <button
           onClick={handleClear}
-          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-full transition-colors duration-200"
+          className="p-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 rounded-full transition-colors duration-200"
           title="Clear text"
         >
           <Image
