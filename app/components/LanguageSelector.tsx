@@ -14,7 +14,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
   const [isCustomLanguage, setIsCustomLanguage] = useState(false);
   const [customLanguage, setCustomLanguage] = useState('');
   const [isClient, setIsClient] = useState(false);
-  const [languages, setLanguages] = useState<string[]>(languagesData);
+  const [languages, setLanguages] = useState<string[]>(loadFromLocalStorage('languages', languagesData));
 
   useEffect(() => {
     setIsClient(true);
@@ -40,8 +40,9 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     onLanguageChange(newLanguage);
 
     setLanguages((prevLanguages) => {
-      const updatedLanguages = prevLanguages.filter((lang) => lang !== newLanguage);
-      return [newLanguage, ...updatedLanguages];
+      const updatedLanguages = [newLanguage, ...prevLanguages.filter((lang) => lang !== newLanguage)];
+      saveToLocalStorage('languages', updatedLanguages); 
+      return updatedLanguages;
     });
   };
 
