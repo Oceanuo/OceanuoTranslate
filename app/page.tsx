@@ -1,15 +1,18 @@
 import Settings from './components/Settings';
-import Head from 'next/head';
+
+export const metadata = {
+  title: 'FatherTranslator',
+  description: 'Translate text using AI',
+  icons: {
+    icon: '/fathertranslator.png',
+    apple: '/fathertranslator.png',
+  },
+};
 
 export default function Home() {
   return (
-    <>
-      <Head>
-        <link rel="icon" href="/fathertranslator.png" />
-      </Head>
-      <main className="min-h-screen">
-        <Settings />
-      </main>
-    </>
+    <main className="min-h-screen">
+      <Settings />
+    </main>
   );
 }
