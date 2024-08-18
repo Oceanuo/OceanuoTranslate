@@ -2,7 +2,6 @@ import React, { useState, useCallback } from 'react';
 import { copyToClipboard } from '../utils/clipboard';
 import LanguageSelector from '../components/LanguageSelector';
 import TextArea from '../components/TextArea';
-import { getFullLanguageName } from '../utils/languageUtils';
 
 interface Settings {
   apiKey: string;
@@ -53,7 +52,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
           model: settings.model,
           messages: [
             { role: "system", content: settings.systemPrompt },
-            { role: "user", content: `Translate the following source text to ${getFullLanguageName(language)}. Output translation directly without any additional text.\nSource Text: ${inputText}\n\nTranslated Text:` }
+            { role: "user", content: `Translate the following source text to ${language}. Output translation directly without any additional text.\nSource Text: ${inputText}\n\nTranslated Text:` }
           ],
           temperature: parseFloat(settings.temperature.toString()),
           top_p: parseFloat(settings.topP.toString()),

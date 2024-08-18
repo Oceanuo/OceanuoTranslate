@@ -3,6 +3,7 @@ import Image from 'next/image';
 import DropdownIcon from '../../public/dropdown.svg';
 import PenIcon from '../../public/pen.svg';
 import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage';
+import languages from '../../language/language.json'; // Import the JSON file
 
 interface LanguageSelectorProps {
   onLanguageChange: (language: string) => void;
@@ -77,12 +78,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
           onChange={handleLanguageChange}
           className="language-select flex-grow"
         >
-          <option value="en">English</option>
-          <option value="es">Spanish</option>
-          <option value="fr">French</option>
-          <option value="de">German</option>
-          <option value="zh">Chinese</option>
-          <option value="ms">Bahasa Malaysia</option>
+          {languages.map((language, index) => (
+            <option key={index} value={language}>
+              {language}
+            </option>
+          ))}
         </select>
       )}
       <button
