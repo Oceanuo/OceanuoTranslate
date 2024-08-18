@@ -25,7 +25,7 @@ const Settings = () => {
     const savedSettings = loadFromLocalStorage('settings', settings);
     setSettings(savedSettings);
     applyTheme(savedSettings.theme);
-  }, [settings]);
+  }, []); 
 
   const toggleSettings = () => {
     setShowSettings(!showSettings);

@@ -25,6 +25,7 @@ const ToolBar: React.FC<ToolBarProps> = ({ onCopy, onClear, copied, cleared }) =
           alt={copied ? "Copied" : "Copy"}
           width={20}
           height={20}
+          priority
         />
       </button>
       <button
