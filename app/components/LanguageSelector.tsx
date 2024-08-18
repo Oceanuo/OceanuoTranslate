@@ -3,7 +3,7 @@ import Image from 'next/image';
 import DropdownIcon from '../../public/dropdown.svg';
 import PenIcon from '../../public/pen.svg';
 import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage';
-import languages from '../../language/language.json'; // Import the JSON file
+import languages from '../../public/language/language.json'; // Import the JSON file
 
 interface LanguageSelectorProps {
   onLanguageChange: (language: string) => void;
