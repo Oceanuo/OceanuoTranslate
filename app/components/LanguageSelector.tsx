@@ -31,7 +31,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     } else {
       onLanguageChange(storedTargetLanguage);
     }
-  }, []);
+  }, [onLanguageChange]);
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLanguage = e.target.value;

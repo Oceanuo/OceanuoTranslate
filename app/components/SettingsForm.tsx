@@ -39,7 +39,7 @@ const SettingsForm: React.FC<SettingsFormProps> = ({ settings, setSettings, appl
     // Apply the loaded settings
     setSettings(tempSettings);
     applyTheme(tempSettings.theme);
-  }, []);
+  }, [applyTheme, setSettings, tempSettings]);
 
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
