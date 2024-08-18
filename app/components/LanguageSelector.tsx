@@ -3,7 +3,7 @@ import Image from 'next/image';
 import DropdownIcon from '../../public/dropdown.svg';
 import PenIcon from '../../public/pen.svg';
 import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage';
-import languages from '../../public/language/language.json'; // Import the JSON file
+import languagesData from '../../public/language/language.json'; 
 
 interface LanguageSelectorProps {
   onLanguageChange: (language: string) => void;
@@ -14,6 +14,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
   const [isCustomLanguage, setIsCustomLanguage] = useState(false);
   const [customLanguage, setCustomLanguage] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const [languages, setLanguages] = useState<string[]>(languagesData);
 
   useEffect(() => {
     setIsClient(true);
@@ -37,6 +38,11 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     setTargetLanguage(newLanguage);
     saveToLocalStorage('targetLanguage', newLanguage);
     onLanguageChange(newLanguage);
+
+    setLanguages((prevLanguages) => {
+      const updatedLanguages = prevLanguages.filter((lang) => lang !== newLanguage);
+      return [newLanguage, ...updatedLanguages];
+    });
   };
 
   const handleCustomLanguageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,7 +56,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange })
     const newIsCustomLanguage = !isCustomLanguage;
     setIsCustomLanguage(newIsCustomLanguage);
     saveToLocalStorage('isCustomLanguage', newIsCustomLanguage);
-    
+
     if (newIsCustomLanguage) {
       onLanguageChange(customLanguage);
     } else {
