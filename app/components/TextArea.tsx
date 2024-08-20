@@ -24,17 +24,17 @@ const TextArea: React.FC<TextAreaProps> = ({
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
+    if (cleared && textAreaRef.current) {
+      textAreaRef.current.scrollTop = 0;
+    }
+  }, [cleared]);
+
+  useEffect(() => {
     if (cleared) {
       const timer = setTimeout(() => setCleared(false), 2000);
       return () => clearTimeout(timer);
     }
   }, [cleared]);
-
-  useEffect(() => {
-    if (textAreaRef.current) {
-      textAreaRef.current.scrollTop = 0;
-    }
-  }, [value]);
 
   const handleClear = () => {
     onClear();
