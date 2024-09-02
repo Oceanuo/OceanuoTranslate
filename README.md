@@ -1,6 +1,6 @@
-# Father Translator
+# Oceanuo Translate
 
-Father Translator is a Next.js application that uses AI to translate text.
+Oceanuo Translate is a Next.js application that uses AI to translate text.
 
 ## Getting Started
 
@@ -15,12 +15,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 1. Clone the repository:
    ```
-   git clone https://github.com/kuekhaoyang/FatherTranslator
+   git clone https://github.com/yourusername/OceanuoTranslate
    ```
 
 2. Navigate to the project directory:
    ```
-   cd fathertranslator
+   cd oceanuotranslate
    ```
 
 3. Install dependencies:

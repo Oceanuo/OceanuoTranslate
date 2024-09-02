@@ -45,7 +45,7 @@ const Settings = () => {
   return (
     <div className="translator flex flex-col h-screen">
       <div className="flex flex-col items-center mb-6 gap-4">
-        <h1 className="text-2xl sm:text-3xl font-bold">FatherTranslator</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold">OceanuoTranslate</h1>
         <button onClick={toggleSettings} className="settings-button w-full">
           <FiSettings />
           <span>Settings</span>

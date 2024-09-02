@@ -1,11 +1,11 @@
 import Settings from './components/Settings';
 
 export const metadata = {
-  title: 'FatherTranslator',
+  title: 'OceanuoTranslate',
   description: 'Translate text using AI',
   icons: {
-    icon: '/fathertranslator.png',
-    apple: '/fathertranslator.png',
+    icon: '/oceanuotranslate.png',
+    apple: '/oceanuotranslate.png',
   },
 };
 

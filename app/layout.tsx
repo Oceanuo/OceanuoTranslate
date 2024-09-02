@@ -5,11 +5,11 @@ import { Inter } from 'next/font/google'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'FatherTranslator',
+  title: 'OceanuoTranslate',
   description: 'Translate text using AI',
   icons: {
-    icon: '/fathertranslator.png',
-    apple: '/fathertranslator.png',
+    icon: '/oceanuotranslate.png',
+    apple: '/oceanuotranslate.png',
   },
 }
 
