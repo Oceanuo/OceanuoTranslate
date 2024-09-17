@@ -68,25 +68,48 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader!.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
-        const parsedLines = lines
-          .map((line) => line.replace(/^data: /, '').trim())
-          .filter((line) => line !== '' && line !== '[DONE]')
-          .map((line) => JSON.parse(line));
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
 
-        for (const parsedLine of parsedLines) {
+        for (const line of lines) {
+          const trimmedLine = line.replace(/^data: /, '').trim();
+          if (trimmedLine === '' || trimmedLine === '[DONE]') continue;
+
+          try {
+            const parsedLine = JSON.parse(trimmedLine);
+            const { choices } = parsedLine;
+            const { delta } = choices[0];
+            const { content } = delta;
+            if (content) {
+              setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content + '...' : prev + content + '...');
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+            console.error('Problematic line:', trimmedLine);
+          }
+        }
+      }
+
+      // Process any remaining data in the buffer
+      if (buffer) {
+        try {
+          const parsedLine = JSON.parse(buffer);
           const { choices } = parsedLine;
           const { delta } = choices[0];
           const { content } = delta;
           if (content) {
-            setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content + '...' : prev + content + '...');
+            setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content : prev + content);
           }
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          console.error('Problematic line:', buffer);
         }
       }
 
