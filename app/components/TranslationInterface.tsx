@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { copyToClipboard } from '../utils/clipboard';
 import LanguageSelector from '../components/LanguageSelector';
 import TextArea from '../components/TextArea';
@@ -21,6 +21,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
   const [inputCopied, setInputCopied] = useState(false);
   const [outputCopied, setOutputCopied] = useState(false);
   const [language, setLanguage] = useState('');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const handleTranslate = useCallback(async () => {
     if (!inputText.trim()) {
@@ -39,9 +40,10 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
     }
 
     setIsTranslating(true);
-    setOutputText('...');
+    setOutputText('...'); 
 
     try {
+      abortControllerRef.current = new AbortController();
       const response = await fetch(settings.apiHost + '/chat/completions', {
         method: 'POST',
         headers: {
@@ -59,7 +61,8 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
           presence_penalty: parseFloat(settings.presencePenalty.toString()),
           frequency_penalty: parseFloat(settings.frequencyPenalty.toString()),
           stream: true
-        })
+        }),
+        signal: abortControllerRef.current.signal
       });
 
       if (!response.ok) {
@@ -88,7 +91,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
             const { delta } = choices[0];
             const { content } = delta;
             if (content) {
-              setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content + '...' : prev + content + '...');
+              setOutputText((prev) => prev === '...' ? content : prev + content);
             }
           } catch (error) {
             console.error('Error parsing JSON:', error);
@@ -97,7 +100,6 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
         }
       }
 
-      // Process any remaining data in the buffer
       if (buffer) {
         try {
           const parsedLine = JSON.parse(buffer);
@@ -105,7 +107,7 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
           const { delta } = choices[0];
           const { content } = delta;
           if (content) {
-            setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) + content : prev + content);
+            setOutputText((prev) => prev === '...' ? content : prev + content);
           }
         } catch (error) {
           console.error('Error parsing JSON:', error);
@@ -113,14 +115,25 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
         }
       }
 
-      setOutputText((prev) => prev.endsWith('...') ? prev.slice(0, -3) : prev);
-    } catch (error) {
-      console.error('Translation error:', error);
-      setOutputText('An error occurred during translation. Please check your settings and try again.');
+      setOutputText((prev) => prev === '...' ? prev.slice(0, -3) : prev);
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.log('Translation aborted');
+      } else {
+        console.error('Translation error:', error);
+        setOutputText('An error occurred during translation. Please check your settings and try again.');
+      }
     } finally {
       setIsTranslating(false);
+      abortControllerRef.current = null;
     }
   }, [inputText, settings, language]);
+
+  const handleStopTranslating = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  };
 
   const handleCopy = async (text: string, setCopied: (copied: boolean) => void) => {
     const success = await copyToClipboard(text);
@@ -142,11 +155,10 @@ const TranslationInterface = ({ settings }: { settings: Settings }) => {
       />
       <LanguageSelector onLanguageChange={setLanguage} />
       <button 
-        onClick={handleTranslate} 
-        className="translate-button" 
-        disabled={isTranslating}
+        onClick={isTranslating ? handleStopTranslating : handleTranslate} 
+        className={isTranslating ? "stop-button" : "translate-button"}
       >
-        {isTranslating ? 'Translating...' : 'Translate'}
+        {isTranslating ? 'Stop Translating' : 'Translate'}
       </button>
       <TextArea
         value={outputText}

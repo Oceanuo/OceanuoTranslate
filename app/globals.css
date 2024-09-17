@@ -72,3 +72,7 @@
 .btn-tertiary {
   @apply bg-red-600 hover:bg-red-700 text-white;
 }
+
+.stop-button {
+  @apply py-3 px-6 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition duration-300;
+}
